@@ -1,0 +1,24 @@
+library(Seurat)
+library(ggplot2)
+library(here)
+cov01 <- Read10X("~/Data/cov01")
+
+all.equal(colnames(cov01[["Gene Expression"]]), colnames(cov01[["Antibody Capture"]]))
+
+cov01_comb <- CreateSeuratObject(counts = cov01[["Gene Expression"]])
+cov01_comb[["ADT"]] <- CreateAssayObject(counts = cov01[["Antibody Capture"]])
+
+Assays(cov01_comb)
+
+# First working with RNA data
+DefaultAssay(cov01_comb) <- "RNA"
+cov01_comb <- NormalizeData(cov01_comb)
+cov01_comb <- FindVariableFeatures(cov01_comb)
+cov01_comb <- ScaleData(cov01_comb)
+cov01_comb <- RunPCA(cov01_comb, verbose = FALSE)
+cov01_comb <- FindNeighbors(cov01_comb, dims = 1:30)
+cov01_comb <- FindClusters(cov01_comb, resolution = 0.8, verbose = FALSE)
+cov01_comb <- RunUMAP(cov01_comb, dims = 1:30)
+UMAP_RNA0.8 <- DimPlot(cov01_comb, label = TRUE)
+saveRDS(UMAP_RNA0.8, file = "~/figures/UMAP_RNA0.8.rds")
+ggsave(file.path("~/figures","UMAP_RNA0.8.png"),plot = UMAP_RNA0.8)
