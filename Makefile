@@ -1,15 +1,24 @@
-PHONY: clean
+.PHONY: clean
 
 clean:
-	rm derived_data/*
-	rm logs/*
-	rm figures/*
+	rm -rf figures
+	rm -rf .created-dirs
+	rm -f report.pdf
+	rm -f report.html
+	rm -f report.tex
+	rm -f report.log
 	
 .created-dirs:
-  mkdir -p figures
+	mkdir -p figures
+	touch .created-dirs
 
-UMAP_RNA0.8.png: Data/
+# Build UMAP on RNA with resolution = 0.8 for clustering
+~/figures/UMAP_RNA0.8.png ~/figures/UMAP_RNA0.8.rds: .created-dirs ~/Data/cov01
 	Rscript ReadIn.R
 
-report.pdf: /figures/UMAP_RNA0.8.png /figures/UMAP_RNA0.8.rds
+# Build report
+report.html: .created-dirs ~/figures/UMAP_RNA0.8.rds
+	R -e "rmarkdown::render(\"report.Rmd\", output_format=\"html_document\")"
+
+report.pdf: .created-dirs ~/figures/UMAP_RNA0.8.rds
 	R -e "rmarkdown::render(\"report.Rmd\", output_format=\"pdf_document\")"

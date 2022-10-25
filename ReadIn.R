@@ -22,3 +22,4 @@ cov01_comb <- RunUMAP(cov01_comb, dims = 1:30)
 UMAP_RNA0.8 <- DimPlot(cov01_comb, label = TRUE)
 saveRDS(UMAP_RNA0.8, file = "~/figures/UMAP_RNA0.8.rds")
 ggsave(file.path("~/figures","UMAP_RNA0.8.png"),plot = UMAP_RNA0.8)
+

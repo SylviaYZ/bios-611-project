@@ -1,12 +1,17 @@
 ---
-title: "report"
+title: "Report analyzing GSE155673"
 author: "Yu (Sylvia) Zhang"
-date: "10/21/2022"
-output: pdf_document
+date: "`r Sys.Date()`"
+output: html_document
 ---
 
+```{r load library}
+library(tinytex)
+
+```
+
 ```{r}
-readRDS("~/figures/UMAP_RNA0.8.rds")
+UMAP_RNA0.8 <- readRDS("~/figures/UMAP_RNA0.8.rds")
 
 plot(UMAP_RNA0.8)
 ```
