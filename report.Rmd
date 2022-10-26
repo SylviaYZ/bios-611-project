@@ -5,13 +5,12 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-```{r load library}
+```{r load library, echo=FALSE, message=FALSE}
 library(tinytex)
 
 ```
 
-```{r}
-UMAP_RNA0.8 <- readRDS("~/figures/UMAP_RNA0.8.rds")
-
+```{r, echo=FALSE}
+UMAP_RNA0.8<-readRDS("~/work/figures/UMAP_RNA0.8.rds")
 plot(UMAP_RNA0.8)
 ```

@@ -13,12 +13,12 @@ clean:
 	touch .created-dirs
 
 # Build UMAP on RNA with resolution = 0.8 for clustering
-~/figures/UMAP_RNA0.8.png ~/figures/UMAP_RNA0.8.rds: .created-dirs ~/Data/cov01
+~/work/figures/UMAP_RNA0.8.png ~/work/figures/UMAP_RNA0.8.rds: .created-dirs ~/work/Data/cov01
 	Rscript ReadIn.R
 
 # Build report
-report.html: .created-dirs ~/figures/UMAP_RNA0.8.rds
+report.html: .created-dirs ~/work/figures/UMAP_RNA0.8.rds
 	R -e "rmarkdown::render(\"report.Rmd\", output_format=\"html_document\")"
 
-report.pdf: .created-dirs ~/figures/UMAP_RNA0.8.rds
+report.pdf: .created-dirs ~/work/figures/UMAP_RNA0.8.rds
 	R -e "rmarkdown::render(\"report.Rmd\", output_format=\"pdf_document\")"
