@@ -7,15 +7,24 @@ The data provided by Arunachalam et al. are sequenced on peripheral blood mononu
 
 # Using this repository
 
-To build the final report, one needs to follow the code provided before to build a docker image and create a container. The current version of docker image is built upon an R built for apple silicon chip. 
+To build the final report, one needs to follow the code provided before to build a docker image and create a container. 
 
 Step 1: build docker image
 
+The current version of docker image is built upon an R built for apple silicon processor.
+
+For intel processor users, please change the first line in Dockerfile to "FROM rocker/verse" to build the docker image. 
+
 ```
 docker build . -t 611proj
+
 ```
 
-Step 2: create docker container
+Step 2: create password for launching docker container.
+
+Create a .password file containing the password user wishes to set.
+
+Step 3: create docker container
 
 ```
 docker run -v $(pwd):/home/rstudio/work\
@@ -24,11 +33,11 @@ docker run -v $(pwd):/home/rstudio/work\
            -it 611proj
 ```
 
-Step 3: open any browser and visit http://localhost:8787. Then log in to the RStudio with the password you set.
+Step 4: open any browser and visit http://localhost:8787. Then log in to the RStudio with the password you set.
 
-Step 4: Go to terminal inside the RStudio, change directory to work.
+Step 5: Go to terminal inside the RStudio, change directory to work.
 
-Step 5: Build report using Makefile. Easier just to use the code below in terminal.
+Step 6: Build report using Makefile. Easier just to use the code below in terminal.
 
 ```
 make clean
