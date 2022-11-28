@@ -23,3 +23,15 @@ UMAP_RNA0.8 <- DimPlot(cov01_comb, label = TRUE)
 saveRDS(UMAP_RNA0.8, file = "~/work/figures/UMAP_RNA0.8.rds")
 ggsave(file.path("~/work/figures","UMAP_RNA0.8.png"),plot = UMAP_RNA0.8)
 
+# Now working with RNA data
+cov01_comb <- NormalizeData(cov01_comb, normalization.method = "CLR", margin = 2, assay = "ADT")
+
+DefaultAssay(cov01_comb) <- "ADT"
+p1 <- FeaturePlot(cov01_comb, "CD3--UCHT1-TSA", cols = c("lightgrey", "darkgreen")) + ggtitle("CD3 protein")
+DefaultAssay(cov01_comb) <- "RNA"
+p2 <- FeaturePlot(cov01_comb, "CD3") + ggtitle("CD3 RNA")
+
+p1 | p2
+
+adt_markers <- FindAllMarkers(cov01_comb, assay = "ADT")
+rna_markers <- FindAllMarkers(cov01_comb, assay = "RNA")
