@@ -1,4 +1,4 @@
-Analysis of Multi-omics genomics data
+Analysis of multi-modal genomics data
 ===============================
 
 The datasets of interest for analysis are from National Center for Biotechnology Information (NCBI) Gene Expression Omnibus (GEO) with accession GSE155673. The study is on "Systems biological assessment of immunity to severe and mild COVID-19 infections". The study uses a new sequencing technology (CITE-seq) that enables simultaneous sequencing of both RNA and surface protein abundance of single cells. With both measurements, it could strengthen our understanding of cells, such as differentially expressed genes across different cell types and states.
@@ -7,7 +7,7 @@ The data provided by Arunachalam et al. are sequenced on peripheral blood mononu
 
 # Using this repository
 
-To build the final report, one needs to follow the code provided before to build a docker image and create a container. 
+To build the final report, user needs to follow the code provided before to build a docker image and create a container. 
 
 Step 1: build docker image
 
@@ -17,7 +17,6 @@ For intel processor users, please change the first line in Dockerfile to "FROM r
 
 ```
 docker build . -t 611proj
-
 ```
 
 Step 2: create password for launching docker container.
@@ -33,9 +32,9 @@ docker run -v $(pwd):/home/rstudio/work\
            -it 611proj
 ```
 
-Step 4: open any browser and visit http://localhost:8787. Then log in to the RStudio with the password you set.
+Step 4: open any browser and visit http://localhost:8787. Then log in to the RStudio with the password user set.
 
-Step 5: Go to terminal inside the RStudio, change directory to work.
+Step 5: Go to terminal inside RStudio, change directory to work.
 
 Step 6: Build report using Makefile. Easier just to use the code below in terminal.
 
