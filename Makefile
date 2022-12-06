@@ -8,8 +8,6 @@ clean:
 	rm -f report.tex
 	rm -f report.log
 	rm -f Rplots.pdf
-	rm -f /Data/ADT_10sample.rds
-	rm -f /Data/Cov2RNA_clustered.rds
 	
 .created-dirs:
 	mkdir -p figures
@@ -44,9 +42,16 @@ clean:
 	Rscript ADT_explore.R
 	
 # Processing ADT
-~/work/Data/ADT_10sample_normalzied.rds
-: .created-dirs ~/work/Data/Cov2RNA_clustered.rds
-	Rscript ADT_explore.R
+~/work/Data/ADT_10sample_normalzied.rds\
+~/work/figures/ADT_violin_T.rds\
+~/work/figures/ADT_violin_T4_T8.rds\
+~/work/figures/ADT_violin_T4naive.rds\
+~/work/figures/ADT_violin_T4memeff.rds\
+~/work/figures/ADT_violin_B.rds\
+~/work/figures/ADT_violin_NK.rds\
+~/work/figures/ADT_violin_CD14mono.rds\
+~/work/figures/ADT_violin_CD14mono.rds: .created-dirs ~/work/Data/Cov2RNA_clustered.rds
+	Rscript ADT_processing.R
 
 # Build report
 report.html: .created-dirs ~/work/figures/UMAP_RNA0.5.rds\
@@ -60,7 +65,16 @@ report.html: .created-dirs ~/work/figures/UMAP_RNA0.5.rds\
   ~/work/figures/RNA_DEcluster_heatmap.rds\
   ~/work/figures/ADT_hist_CD3.rds\
   ~/work/figures/RNA_hist_CD3.rds\
-  ~/work/Data/ADT_10sample.rds
+  ~/work/Data/ADT_10sample.rds\
+  ~/work/Data/ADT_10sample_normalzied.rds\
+	~/work/figures/ADT_violin_T.rds\
+	~/work/figures/ADT_violin_T4_T8.rds\
+	~/work/figures/ADT_violin_T4naive.rds\
+	~/work/figures/ADT_violin_T4memeff.rds\
+	~/work/figures/ADT_violin_B.rds\
+	~/work/figures/ADT_violin_NK.rds\
+	~/work/figures/ADT_violin_CD14mono.rds\
+	~/work/figures/ADT_violin_DC.rds
 		R -e "rmarkdown::render(\"report.Rmd\", output_format=\"html_document\")"
 
 	

@@ -1,9 +1,9 @@
-Analysis of multi-modal genomics data
+Exploratory analysis of multi-omics  data
 ===============================
 
 The datasets of interest for analysis are from National Center for Biotechnology Information (NCBI) Gene Expression Omnibus (GEO) with accession GSE155673. The study is on "Systems biological assessment of immunity to severe and mild COVID-19 infections". The study uses a new sequencing technology (CITE-seq) that enables simultaneous sequencing of both RNA and surface protein abundance of single cells. With both measurements, it could strengthen our understanding of cells, such as differentially expressed genes across different cell types and states.
 
-The data provided by Arunachalam et al. are sequenced on peripheral blood mononuclear cells. Exploratory analysis will be conducted on this new type of sequencing data. One of the main interests is analyzing the integrated data, that is, integrating the RNA expression with protein abundance data. Detail analyses include cell classification and differentially expressed gene identification. Further, analysis can also be performed on each measurement, and results can be compared. Last, most analyses will be using currently available methods and packages.
+The data provided by Arunachalam et al. are sequenced on peripheral blood mononuclear cells. Exploratory analysis will be conducted on this new type of sequencing data. One of the main interests is to explore the additional information antibody data provides as comparing to single-cell RNA-seq. Detail analyses include cell classification and differentially expressed gene identification. Analyses are performed on each type of measurement, and results are compared. Last, most analyses will be using currently available methods and packages in R.
 
 # Using this repository
 
@@ -42,3 +42,7 @@ Step 6: Build report using Makefile. Easier just to use the code below in termin
 make clean
 make report.html
 ```
+
+# Conclusion
+
+After pre-processing, celltype specific markers in RNA and antibody data behave consistently. Antibody data can marginally improve cell type identification of single cell data.

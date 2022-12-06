@@ -3,7 +3,7 @@ library(ggplot2)
 library(here)
 
 # Input
-cov02 <- Read10X("~/work/Data/cov02")
+cov02 <- Read10X("~/work/Data/cov18")
 
 # Analysis
 all.equal(colnames(cov02[["Gene Expression"]]), colnames(cov02[["Antibody Capture"]]))
@@ -18,7 +18,7 @@ DefaultAssay(cov02_comb) <- "RNA"
 cov02_comb[["percent.mt"]] <- PercentageFeatureSet(cov02_comb, pattern = "^MT-")
 violin_RNA_QC <- VlnPlot(cov02_comb, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3, assay = "RNA")
 
-cov02_comb <- subset(cov02_comb, subset = nFeature_RNA > 100 & nFeature_RNA < 3000 & percent.mt < 15)
+cov02_comb <- subset(cov02_comb, subset = nFeature_RNA > 200 & nFeature_RNA < 2500 & percent.mt < 10)
 
 cov02_comb <- NormalizeData(cov02_comb)
 cov02_comb <- FindVariableFeatures(cov02_comb)

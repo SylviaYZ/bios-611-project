@@ -1,7 +1,7 @@
 ---
-title: "Multi-omics analysis on COVID-19 infected patients."
+title: "Multi-omics exploratory analysis."
 author: "Yu (Sylvia) Zhang"
-date: "`r Sys.Date()`"
+date: "12/3/2022"
 output: html_document
 ---
 
@@ -15,19 +15,20 @@ library(here)
 
 # Introduction
 
-Many studies have been conducted on cohorts of COVID-19 patients. The specific study of interest by Arunachalam et al. (2020) utilizes cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq), a novel sequence method that enables simultaneous measurements of RNA and antibody of single cells (Stoeckius et al., 2017). Samples draw from a total of 7 COVID-19 patients and 5 healthy controls underwent CITE-seq. In this study, we will focus on CITE-seq data of one COVID-19 patient. We are interested in learning this new type of data, and the additional information it provides as comparing to single-cell RNA-seq. One critical goal of single-cell genomic data is to identify cell type of each cell. Typical cell type identification are done in a supervised method where previously identify celltype specific markers are used. 
+The study pf "[systems] biological assessment of immunity to mild versus severe COVID-19 infection in humans" patients by Arunachalam et al. (2020) utilizes cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq), a novel sequence method that enables simultaneous measurements of RNA and antibody of single cells (Stoeckius et al., 2017). Samples draw from a total of 7 COVID-19 patients and 5 healthy controls underwent CITE-seq. In this study, we will focus on CITE-seq data of one healthy participans. We are interested in learning this new type of data and methods analyzing and visualizing this data. Further, we are curious of the additional information antibody data provides as comparing to single-cell RNA-seq. 
 
-We will analyze one COVID-19 patient with severe symptoms. Not only we are interested in the differential expression between patient and healthy participants, also the additional information CITE-seq brings will be examined. We will first process the transcriptome data, then perform differential expression. We will examine antibody data last to check for additional information if can provide.
+One critical goal of single-cell genomic data is to identify cell type of each cell. Typical cell type identification are done in a supervised method where previously identify celltype specific markers are used. There are numeroud unsupervised method available, but yet none of them is able to identify cells at finer level. Arunachalam et al. (2020) manually annotated cells based on both RNA and antibody data. In this report, we will analyze one helthy paticipant from this COVID-19 study. We will first process the transcriptome (RNA) data, then perform differential expression analysis. We will examine antibody data last to check for additional information. 
 
-# Data processing
+# RNA Data processing
 
-Data from one female severe COVID-19 patient is obtained from Gene Expression Omnibus (GEO) with accession GSE155673. A total of 1891 cells are sequenced with 33538 genes for RNA and 39 antibodies. Given only 39 antibofies measured, we will primarily work with RNA data, then explore antibodies. 
+Data from one healthy female is obtained from Gene Expression Omnibus (GEO) with accession GSE155673. A total of 5996 cells are sequenced with 33538 genes for RNA and 39 antibodies. Given only 39 antibodies measured, we will primarily work with RNA data, then explore antibodies data. 
 
 ## RNA Quality control
 
-We first check the quality of cells through RNA data. Upon checking the quality of this sample, we filter cells with high mitachondrial percent (percent.mt) that exceeds 15% (to remove dead cells), and number of feature expressed for each cell (nFearue_RNA) are bounded between 100 and 3000 (to remove potential duplets). After filtering, 1399 cells are left.
+Upon checking the quality of this sample through RNA data, we filter cells with high mitachondrial percentage (percent.mt) that exceeds 10% (to remove dead cells), and number of feature expressed for each cell (nFearue_RNA) are selected to be bounded between 200 and 2500 (to remove potential duplets). After filtering, 3004 cells are left.
 
 ```{r, echo=FALSE, fig.width=10}
+# 1819 - 1215
 violin_RNA_QC <- readRDS( file = "~/work/figures/violin_RNA_QC.rds")
 plot(violin_RNA_QC)
 ```
@@ -35,7 +36,7 @@ plot(violin_RNA_QC)
 
 ## RNA Downstream analysis
 
-Transcriptome data is normalized using LogNormalized method from Seurat. Top 2000 most variant features are selected for downstream analysis to speed up the proccess. Principle component analysis is conducted, and top 30 PCs are chosen for UMAP dimension reduction and clustering through shared nearest-neighbor graph. 
+Transcriptome data is normalized using Log-normalization from Seurat (Hao et al., 2021). Top 2000 most variant features are selected for downstream analysis to speed up the proccess. Principle component analysis is conducted, and top 30 PCs are chosen for UMAP dimension reduction and clustering through shared nearest-neighbor method. We will try to identify the cell type for each cluster of cells assuming all cells in a given cluster are the same cell type.
 
 
 ```{r, echo=FALSE, fig.width = 6}
@@ -48,11 +49,13 @@ plot(UMAP_RNA0.5)
 
 # Identify cell types through RNA by clusters
 
-Given the uncertainty present in UMAP dimension reduction method used for visualization and considering replication for this project, cell types will not labeled directly. Through UMAP dimension reduction and clustering are two independent steps, cluster number varies. Instead, we present violin plot to visualize previously identified cell type specific markers to help readers identify cell type for each cluster. 
+Given the uncertainty presented in UMAP dimension reduction method used for visualization and considering replication for this project, cell types will not labeled directly. Through UMAP dimension reduction and clustering are two independent steps, cluster number varies. Instead, we present violin plot to visualize previously identified cell type specific markers to help readers identify cell type for each cluster. 
 
 ## Violin plots to check specific known markers 
 
 #### Markers for T cells:
+
+Genes CD3D and CD3E are all highly expressed in 4 clusters, typically we would assign these 4 clusters as T cells. 
 
 ```{r, echo=FALSE, fig.width = 8}
 
@@ -75,6 +78,7 @@ plot(RNA_violin_T4_T8)
 ```
 
 #### Markers for B cells:
+
 
 ```{r, echo=FALSE, fig.width = 8}
 RNA_violin_B <- readRDS(file = "~/work/figures/RNA_violin_B.rds")
@@ -113,7 +117,7 @@ plot(RNA_violin_DC)
 
 #### Markers for platelet:
 
-```{r, echo=FALSE, fig.width = 4}
+```{r, echo=FALSE, fig.width = 6}
 RNA_violin_PL <- readRDS(file = "~/work/figures/RNA_violin_PL.rds")
 
 plot(RNA_violin_PL) 
@@ -128,7 +132,7 @@ Not only this can guide us identify cell types, also it can discover novel marke
 
 A warning message might be given here since DE analysis is done on normalized data, heatmap is drawn using scaled data that includes only top 2000 most variant genes.
 
-```{r, echo = FALSE, fig.width=10}
+```{r, echo = FALSE, fig.width=20, fig.height=15}
 RNA_DEcluster_heatmap <- readRDS(file = "~/work/figures/RNA_DEcluster_heatmap.rds")
 
 plot(RNA_DEcluster_heatmap) 
@@ -173,11 +177,106 @@ boxplot( ADT_10sample_normalzied,
 
 ```
 
+## DE genes visialization
+
+The 39 cell surface protein markers used are markers for various cell type. We visualize a subset of markers through violin plot.
+
+#### Markers for T cells
+
+Marker CD3 provides consistent result as CD3 in RNA. 
+
+```{r, echo=FALSE, fig.width = 8}
+ADT_violin_T <- readRDS(file = "~/work/figures/ADT_violin_T.rds")
+
+plot(ADT_violin_T) 
+
+```
+
+#### Markers for CD4 T cells or CD8 T cells:
+
+Marker CD4 and CD8 provide much more helpful information in addition to CD3 as comapred to these genes in RNA.
+
+```{r, echo=FALSE, fig.width = 8}
+ADT_violin_T4_T8 <- readRDS(file = "~/work/figures/ADT_violin_T4_T8.rds")
+
+plot(ADT_violin_T4_T8) 
+
+```
+
+#### Markers for CD4 naive T cells:
+
+Noticing one of the cluster corrsponding to CD4 T cells hints for two groups within this cluster. We may be able to separate out these two groups, and classify one of them as CD4 naive T cell with further investigation. 
+
+```{r, echo=FALSE, fig.width = 6}
+ADT_violin_T4naive <- readRDS(file = "~/work/figures/ADT_violin_T4naive.rds")
+
+plot(ADT_violin_T4naive) 
+
+```
+
+#### Markers for CD4 memory T cells:
+
+This does not provide additional informatin. Howver, there are more marers sequenced that are up-regulated in various cell types. Through a more through examination, we might be able to futher classify cell subtypes.
+
+```{r, echo=FALSE, fig.width = 6}
+ADT_violin_T4memeff <- readRDS(file = "~/work/figures/ADT_violin_T4memeff.rds")
+
+plot(ADT_violin_T4memeff)
+
+```
+
+#### Markers for B cells:
+
+Both CD19 and CD20 show consistent result as gene MS4A1 used in RNA to identify B cells. 
+
+```{r, echo=FALSE, fig.width = 8}
+ADT_violin_B <- readRDS(file = "~/work/figures/ADT_violin_B.rds")
+
+plot(ADT_violin_B)
+
+```
+
+#### Markers for NK cells:
+
+Noticing there seems to be one outlier cell among clusters of cell that are highly expressed in marker CD56. Further investigation is needed to 
+
+```{r, echo=FALSE, fig.width = 6}
+ADT_violin_NK <- readRDS(file = "~/work/figures/ADT_violin_NK.rds")
+
+plot(ADT_violin_NK)
+
+```
+
+
+#### Markers for CD14+ monocyte cells:
+
+```{r, echo=FALSE, fig.width = 6}
+ADT_violin_CD14mono <- readRDS(file = "~/work/figures/ADT_violin_CD14mono.rds")
+
+plot(ADT_violin_CD14mono)
+
+```
+
+#### Markers for dendritic cells:
+
+```{r, echo=FALSE, fig.width = 8}
+ADT_violin_DC <- readRDS(file = "~/work/figures/ADT_violin_DC.rds")
+
+plot(ADT_violin_DC)
+
+```
+
+# Conclusion
+
+Looking at plots for antibody data, there are cells in few genes that are outliers worth further investigation given my lack of understaning in this antibody data. We only looked into one healthy participant's sample, it will be of our interest to analyze the entire cohort and examine genes expressed between COVID-19 patients and healthy controls. Though, that involves data integration from different batch of sequencing which adds another layer of complexity. 
+
+Overall, comparing violin plots of various celltype specific markers, antibody data can marginally improve cell type identification of single cell data. A carefully curated list of cell surface protein markers can be used in conjunction with RNA data to identify celltype. Further, there is a lack of diverse methods in analyzing CITE-seq data given it is developed and getting popularized recently. CITE-seq is an exicitng instrument to strength out understanding of single cells, and there are some gaps need to be filled for analyzing this type of data rigorously and correctly to yield compelling result. 
+
 # Reference
 
 Arunachalam, P. S., Wimmers, F., Mok, C. K. P., Perera, R. A. P. M., Scott, M., Hagan, T., Sigal, N., Feng, Y., Bristow, L., Tak-Yin Tsang, O., Wagh, D., Coller, J., Pellegrini, K. L., Kazmin, D., Alaaeddine, G., Leung, W. S., Chan, J. M. C., Chik, T. S. H., Choi, C. Y. C., & Huerta, C. (2020). Systems biological assessment of immunity to mild versus severe COVID-19 infection in humans. Science, 369(6508), 1210–1220. https://doi.org/10.1126/science.abc6261
 
-Centers for Disease Control and Prevention. (2022, December 5). COVID Data Tracker. Centers for Disease Control and Prevention. https://covid.cdc.gov/covid-data-tracker/#datatracker-home
+Hao, Y., Hao, S., Andersen-Nissen, E., Mauck, W. M., Zheng, S., Butler, A., Lee, M. J., Wilk, A. J., Darby, C., Zager, M., Hoffman, P., Stoeckius, M., Papalexi, E., Mimitou, E. P., Jain, J., Srivastava, A., Stuart, T., Fleming, L. M., Yeung, B., & Rogers, A. J. (2021). Integrated analysis of multimodal single-cell data. Cell, 184(13). https://doi.org/10.1016/j.cell.2021.04.048
 
 Stoeckius, M., Hafemeister, C., Stephenson, W., Houck-Loomis, B., Chattopadhyay, P. K., Swerdlow, H., Satija, R., & Smibert, P. (2017). Simultaneous epitope and transcriptome measurement in single cells. Nature Methods, 14(9), 865–868. https://doi.org/10.1038/nmeth.4380 
 
