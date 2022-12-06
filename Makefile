@@ -7,6 +7,9 @@ clean:
 	rm -f report.html
 	rm -f report.tex
 	rm -f report.log
+	rm -f Rplots.pdf
+	rm -f /Data/ADT_10sample.rds
+	rm -f /Data/Cov2RNA_clustered.rds
 	
 .created-dirs:
 	mkdir -p figures
@@ -36,7 +39,13 @@ clean:
 	
 # Explore ADT
 ~/work/figures/ADT_hist_CD3.rds\
-~/work/figures/RNA_hist_CD3.rds: .created-dirs ~/work/Data/Cov2RNA_clustered.rds
+~/work/figures/RNA_hist_CD3.rds\
+~/work/Data/ADT_10sample.rds: .created-dirs ~/work/Data/Cov2RNA_clustered.rds
+	Rscript ADT_explore.R
+	
+# Processing ADT
+~/work/Data/ADT_10sample_normalzied.rds
+: .created-dirs ~/work/Data/Cov2RNA_clustered.rds
 	Rscript ADT_explore.R
 
 # Build report
@@ -50,7 +59,8 @@ report.html: .created-dirs ~/work/figures/UMAP_RNA0.5.rds\
   ~/work/figures/RNA_violin_DC.rds\
   ~/work/figures/RNA_DEcluster_heatmap.rds\
   ~/work/figures/ADT_hist_CD3.rds\
-  ~/work/figures/RNA_hist_CD3.rds
+  ~/work/figures/RNA_hist_CD3.rds\
+  ~/work/Data/ADT_10sample.rds
 		R -e "rmarkdown::render(\"report.Rmd\", output_format=\"html_document\")"
 
 	

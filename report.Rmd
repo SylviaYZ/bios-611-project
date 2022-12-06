@@ -143,20 +143,35 @@ For exampling, looking at gene CD3, the range of count from antibofy is larger t
 
 ```{r, echo = FALSE, fig.width= 8}
 ADT_hist_CD3 <- readRDS(file = "~/work/figures/ADT_hist_CD3.rds")
-plot(ADT_hist_CD3)
+plot(ADT_hist_CD3, main = "Antibody count of gene CD3", xlim = c(0,800), 
+     xlab = "Count")
 
 RNA_hist_CD3 <- readRDS(file = "~/work/figures/RNA_hist_CD3.rds")
-plot(RNA_hist_CD3)
+plot(RNA_hist_CD3, main = "RNA count of gene CD3E",
+     xlab = "Count")
 ```
 
 Further, we randomly selected 10 cells to check the distribution of the 10 antibodies expression.
 
 ```{r, echo = FALSE, fig.width= 8}
-ADR_10sample_boxplot <- readRDS(file = "~/work/figures/ADR_10sample_boxplot.rds")
-boxplot(ADR_10sample_boxplot)
+ADT_10sample <- readRDS(file = "~/work/Data/ADT_10sample.rds")
+
+boxplot( ADT_10sample,
+        main = "Antibody count of 10 randomly drawn cells", xlab = "Cell", ylab = "Antibody count", xaxt = "n")
 
 ```
 
+## Antibody data processing
+
+We normalize antibody count data using centered log ratio transformation. After normalization, we randomly draw 10 cells to check their distribution.
+
+```{r, echo = FALSE, fig.width= 8}
+ADT_10sample_normalzied <- readRDS(file = "~/work/Data/ADT_10sample_normalzied.rds")
+
+boxplot( ADT_10sample_normalzied,
+        main = "Normalized antibody count of 10 randomly drawn cells", xlab = "Cell", ylab = "Normalzied antibody count", xaxt = "n")
+
+```
 
 # Reference
 
