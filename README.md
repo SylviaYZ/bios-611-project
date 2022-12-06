@@ -45,4 +45,13 @@ make report.html
 
 # Conclusion
 
+
 After pre-processing, celltype specific markers in RNA and antibody data behave consistently. Antibody data can marginally improve cell type identification of single cell data.
+
+Figure below shows annotation of single-cell data using RNA and antibody information. Given the uncertainty in UMAP visualization, these two plots are not replicable using Makefile. 
+
+![UMAP celltype RNA](./UMAP_celltypeRNA.png)
+
+![UMAP celltype RNA](./UMAP_celltypeADT.png)
+
+![UMAP celltype ADT](./UMAP_celltypeADT.png)
