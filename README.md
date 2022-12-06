@@ -36,7 +36,7 @@ Step 4: open any browser and visit http://localhost:8787. Then log in to the RSt
 
 Step 5: Go to terminal inside RStudio, change directory to work.
 
-Step 6: Build report using Makefile. Easier just to use the code below in terminal.
+Step 6: Build report using Makefile with code provided below.
 
 ```
 make clean
