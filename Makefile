@@ -74,7 +74,9 @@ report.html: .created-dirs ~/work/figures/UMAP_RNA0.5.rds\
 	~/work/figures/ADT_violin_B.rds\
 	~/work/figures/ADT_violin_NK.rds\
 	~/work/figures/ADT_violin_CD14mono.rds\
-	~/work/figures/ADT_violin_DC.rds
+	~/work/figures/ADT_violin_DC.rds\
+	~/work/UMAP_celltypeRNA.png\
+	~/work/UMAP_celltypeADT.png
 		R -e "rmarkdown::render(\"report.Rmd\", output_format=\"html_document\")"
 
 	
