@@ -1,16 +1,168 @@
 ---
-title: "Report analyzing GSE155673"
+title: "Multi-omics analysis on COVID-19 infected patients."
 author: "Yu (Sylvia) Zhang"
 date: "`r Sys.Date()`"
 output: html_document
 ---
 
-```{r load library, echo=FALSE, message=FALSE}
-library(tinytex)
+```{r load library, echo=FALSE, message=FALSE, echo = FALSE}
+library(Seurat)
+library(ggplot2)
+library(dplyr)
+library(here)
 
 ```
 
-```{r, echo=FALSE}
-UMAP_RNA0.8<-readRDS("~/work/figures/UMAP_RNA0.8.rds")
-plot(UMAP_RNA0.8)
+# Introduction
+
+Many studies have been conducted on cohorts of COVID-19 patients. The specific study of interest by Arunachalam et al. (2020) utilizes cellular indexing of transcriptomes and epitopes by sequencing (CITE-seq), a novel sequence method that enables simultaneous measurements of RNA and antibody of single cells (Stoeckius et al., 2017). Samples draw from a total of 7 COVID-19 patients and 5 healthy controls underwent CITE-seq. In this study, we will focus on CITE-seq data of one COVID-19 patient. We are interested in learning this new type of data, and the additional information it provides as comparing to single-cell RNA-seq. One critical goal of single-cell genomic data is to identify cell type of each cell. Typical cell type identification are done in a supervised method where previously identify celltype specific markers are used. 
+
+We will analyze one COVID-19 patient with severe symptoms. Not only we are interested in the differential expression between patient and healthy participants, also the additional information CITE-seq brings will be examined. We will first process the transcriptome data, then perform differential expression. We will examine antibody data last to check for additional information if can provide.
+
+# Data processing
+
+Data from one female severe COVID-19 patient is obtained from Gene Expression Omnibus (GEO) with accession GSE155673. A total of 1891 cells are sequenced with 33538 genes for RNA and 39 antibodies. Given only 39 antibofies measured, we will primarily work with RNA data, then explore antibodies. 
+
+## RNA Quality control
+
+We first check the quality of cells through RNA data. Upon checking the quality of this sample, we filter cells with high mitachondrial percent (percent.mt) that exceeds 15% (to remove dead cells), and number of feature expressed for each cell (nFearue_RNA) are bounded between 100 and 3000 (to remove potential duplets). After filtering, 1399 cells are left.
+
+```{r, echo=FALSE, fig.width=10}
+violin_RNA_QC <- readRDS( file = "~/work/figures/violin_RNA_QC.rds")
+plot(violin_RNA_QC)
 ```
+
+
+## RNA Downstream analysis
+
+Transcriptome data is normalized using LogNormalized method from Seurat. Top 2000 most variant features are selected for downstream analysis to speed up the proccess. Principle component analysis is conducted, and top 30 PCs are chosen for UMAP dimension reduction and clustering through shared nearest-neighbor graph. 
+
+
+```{r, echo=FALSE, fig.width = 6}
+
+UMAP_RNA0.5 <- readRDS(file = "~/work/figures/UMAP_RNA0.5.rds") + ggtitle("UMAP of RNA from one severe COVID-19 patient")
+
+plot(UMAP_RNA0.5) 
+
+```
+
+# Identify cell types through RNA by clusters
+
+Given the uncertainty present in UMAP dimension reduction method used for visualization and considering replication for this project, cell types will not labeled directly. Through UMAP dimension reduction and clustering are two independent steps, cluster number varies. Instead, we present violin plot to visualize previously identified cell type specific markers to help readers identify cell type for each cluster. 
+
+## Violin plots to check specific known markers 
+
+#### Markers for T cells:
+
+```{r, echo=FALSE, fig.width = 8}
+
+RNA_violin_T <- readRDS(file = "~/work/figures/RNA_violin_T.rds")
+
+plot(RNA_violin_T) 
+
+```
+
+#### Markers for CD4 T cells or CD8 T cells:
+
+Noticing here, it is difficult to use CD3D, CD3E and CD4 to infer which cluster of cells are CD4+ T cells. Further, few clusters of cells can only be identified as T cells, but not to a finer level as either CD4+ or CD8+. 
+
+Sometimes, immunologists are interested in CD4+ Th1 or CD4+ Th2 T cells, current method of using only RNA barely achieve satisfactory result to identify cell subtypes. 
+
+```{r, echo=FALSE, fig.width = 8}
+RNA_violin_T4_T8 <- readRDS(file = "~/work/figures/RNA_violin_T4_T8.rds")
+
+plot(RNA_violin_T4_T8) 
+```
+
+#### Markers for B cells:
+
+```{r, echo=FALSE, fig.width = 8}
+RNA_violin_B <- readRDS(file = "~/work/figures/RNA_violin_B.rds")
+
+plot(RNA_violin_B) 
+```
+
+#### Markers for NK cells:
+
+These cells can also be up-regulated in T-cell markers (i.e., CD3).
+
+```{r, echo=FALSE, fig.width = 8}
+RNA_violin_NK <- readRDS(file = "~/work/figures/RNA_violin_NK.rds")
+
+plot(RNA_violin_NK) 
+
+```
+
+#### Markers for CD14+ monocyte cells:
+
+```{r, echo=FALSE, fig.width = 8}
+RNA_violin_CD14mono <- readRDS(file = "~/work/figures/RNA_violin_CD14mono.rds")
+
+plot(RNA_violin_CD14mono) 
+
+```
+
+#### Markers for dendritic cells:
+
+```{r, echo=FALSE, fig.width = 8}
+RNA_violin_DC <- readRDS(file = "~/work/figures/RNA_violin_DC.rds")
+
+plot(RNA_violin_DC) 
+
+```
+
+#### Markers for platelet:
+
+```{r, echo=FALSE, fig.width = 4}
+RNA_violin_PL <- readRDS(file = "~/work/figures/RNA_violin_PL.rds")
+
+plot(RNA_violin_PL) 
+
+```
+
+## Find DE genes using Wilcoxon rank sum test
+
+To further confirm cell identify, we perform differential expression analysis for each cluster of cells as comapring to all other cells using Wilcoxon rank sum test. P-value is adjusted for multiple testing using Bonferroni correction. Only positive markers are kept, and average log of fold change in normalized expression has to be greater than 0.25. 
+
+Not only this can guide us identify cell types, also it can discover novel marker genes for each cell type. We plotted the heatmap to visualize top 10 DE genes (in terms of average log of fold change) for each cluster. 
+
+A warning message might be given here since DE analysis is done on normalized data, heatmap is drawn using scaled data that includes only top 2000 most variant genes.
+
+```{r, echo = FALSE, fig.width=10}
+RNA_DEcluster_heatmap <- readRDS(file = "~/work/figures/RNA_DEcluster_heatmap.rds")
+
+plot(RNA_DEcluster_heatmap) 
+
+```
+
+# Explore antibody data
+
+A list of 39 cell surface protein markers are used to measure antibodies. This measurement yield different data type as comapred to RNA, though both are obtained from the same cell and underwernt the same sequencing steps. 
+
+For exampling, looking at gene CD3, the range of count from antibofy is larger than the range from RNA. 
+
+```{r, echo = FALSE, fig.width= 8}
+ADT_hist_CD3 <- readRDS(file = "~/work/figures/ADT_hist_CD3.rds")
+plot(ADT_hist_CD3)
+
+RNA_hist_CD3 <- readRDS(file = "~/work/figures/RNA_hist_CD3.rds")
+plot(RNA_hist_CD3)
+```
+
+Further, we randomly selected 10 cells to check the distribution of the 10 antibodies expression.
+
+```{r, echo = FALSE, fig.width= 8}
+ADR_10sample_boxplot <- readRDS(file = "~/work/figures/ADR_10sample_boxplot.rds")
+boxplot(ADR_10sample_boxplot)
+
+```
+
+
+# Reference
+
+Arunachalam, P. S., Wimmers, F., Mok, C. K. P., Perera, R. A. P. M., Scott, M., Hagan, T., Sigal, N., Feng, Y., Bristow, L., Tak-Yin Tsang, O., Wagh, D., Coller, J., Pellegrini, K. L., Kazmin, D., Alaaeddine, G., Leung, W. S., Chan, J. M. C., Chik, T. S. H., Choi, C. Y. C., & Huerta, C. (2020). Systems biological assessment of immunity to mild versus severe COVID-19 infection in humans. Science, 369(6508), 1210–1220. https://doi.org/10.1126/science.abc6261
+
+Centers for Disease Control and Prevention. (2022, December 5). COVID Data Tracker. Centers for Disease Control and Prevention. https://covid.cdc.gov/covid-data-tracker/#datatracker-home
+
+Stoeckius, M., Hafemeister, C., Stephenson, W., Houck-Loomis, B., Chattopadhyay, P. K., Swerdlow, H., Satija, R., & Smibert, P. (2017). Simultaneous epitope and transcriptome measurement in single cells. Nature Methods, 14(9), 865–868. https://doi.org/10.1038/nmeth.4380 
+
