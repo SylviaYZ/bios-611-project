@@ -139,6 +139,13 @@ plot(RNA_DEcluster_heatmap)
 
 ```
 
+## Labeled clusters 
+
+Figure below shows a labeled UMAP visualization to demonstrate the product of DE analysis. Though UMAP orientation and clusters could be different than the one shown in previous section of this report. Annotatition of cells in 13 clusters with RNA infomation proves to be difficult. We hope antibody data can provide addiitonal evident to support unsupervised classification. 
+
+![UMAP celltype](./UMAP_celltypeRNA.png)
+
+
 # Explore antibody data
 
 A list of 39 cell surface protein markers are used to measure antibodies. This measurement yield different data type as comapred to RNA, though both are obtained from the same cell and underwernt the same sequencing steps. 
@@ -266,9 +273,15 @@ plot(ADT_violin_DC)
 
 ```
 
+## Labeled clusters 
+
+We modified cell labels according to the additional information from antibody data. We are able to provde better annotation for T cells to either CD4+ or CD8+ T cells. This plot is generated not through Makefile and typically not replicable given the randomess in UMAP. 
+
+![UMAP celltype](./UMAP_celltypeADT.png)
+
 # Conclusion
 
-Looking at plots for antibody data, there are cells in few genes that are outliers worth further investigation given my lack of understaning in this antibody data. We only looked into one healthy participant's sample, it will be of our interest to analyze the entire cohort and examine genes expressed between COVID-19 patients and healthy controls. Though, that involves data integration from different batch of sequencing which adds another layer of complexity. 
+Looking at plots for antibody data, there are cells that are outliers worth further investigation, given my lack of understaning in this antibody data. We only looked into one healthy participant's sample, it will be of our interest to analyze the entire cohort and examine gene expression between COVID-19 patients and healthy controls. Though, that involves data integration from different batch of sequencing which adds another layer of complexity, and we have not yet find the ideal available method to do such task. 
 
 Overall, comparing violin plots of various celltype specific markers, antibody data can marginally improve cell type identification of single cell data. A carefully curated list of cell surface protein markers can be used in conjunction with RNA data to identify celltype. Further, there is a lack of diverse methods in analyzing CITE-seq data given it is developed and getting popularized recently. CITE-seq is an exicitng instrument to strength out understanding of single cells, and there are some gaps need to be filled for analyzing this type of data rigorously and correctly to yield compelling result. 
 
