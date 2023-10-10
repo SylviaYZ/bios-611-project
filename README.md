@@ -1,5 +1,5 @@
 Exploratory analysis of multi-omics  data
-===============================
+================================
 
 The datasets of interest for analysis are from National Center for Biotechnology Information (NCBI) Gene Expression Omnibus (GEO) with accession GSE155673. The study is on "Systems biological assessment of immunity to severe and mild COVID-19 infections". The study uses a new sequencing technology (CITE-seq) that enables simultaneous sequencing of both RNA and surface protein abundance of single cells. With both measurements, it could strengthen our understanding of cells, such as differentially expressed genes across different cell types and states.
 
